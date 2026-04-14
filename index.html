@@ -1,20 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SecureVision</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #1F3864; color: white;
-           display: flex; flex-direction: column; align-items: center;
-           justify-content: center; height: 100vh; margin: 0; }
-    h1 { font-size: 2rem; margin-bottom: 8px; }
-    p  { color: #aac4f0; font-size: 1rem; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#06111f">
+  <title>SecureVision-S3</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-  <h1>🔒 SecureVision</h1>
-  <p>Sistema de seguridad inteligente</p>
-  <p style="margin-top:40px; font-size:0.8rem; color:#556a8a;">Versión 2.0 — Iniciando…</p>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">SV</div>
+        <div class="brand-copy">
+          <div class="brand-title">SecureVision-S3</div>
+          <div class="brand-sub">Panel alarma</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="btn-gmail"  class="icon-btn" title="Gmail">✉</button>
+        <button id="btn-arm"    class="icon-btn" title="Armado / Desarmado">🔕</button>
+        <button id="btn-eye"    class="icon-btn" title="Vista rápida">👁</button>
+        <button id="btn-config" class="icon-btn" title="Configuración">⚙</button>
+      </div>
+      <div class="clock-box">
+        <div id="clock-date" class="clock-date">--/--/----</div>
+        <div id="clock-time" class="clock-time">--:--:--</div>
+      </div>
+    </header>
+
+    <section class="hero-panel">
+      <div class="hero-media-wrap">
+        <img id="latest-image" class="hero-media" alt="Última alerta">
+        <div id="latest-empty" class="hero-empty">Sin imagen cargada</div>
+      </div>
+      <div class="hero-actions">
+        <button id="btn-open-latest"     class="action-btn">Abrir</button>
+        <button id="btn-download-latest" class="action-btn secondary">Descargar</button>
+      </div>
+    </section>
+
+    <section class="history-shell">
+      <div id="history-scroll" class="history-scroll">
+        <div id="history-groups"></div>
+      </div>
+      <div class="history-footer">
+        <button id="btn-load-more" class="load-more-btn" style="display:none">Traer más</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Viewer -->
+  <div id="viewer-modal" class="overlay hidden">
+    <div class="dialog viewer-dialog">
+      <button class="close-btn" data-close="viewer-modal">✕</button>
+      <div id="viewer-content" class="viewer-content"></div>
+    </div>
+  </div>
+
+  <!-- Gmail -->
+  <div id="gmail-modal" class="overlay hidden">
+    <div class="dialog">
+      <button class="close-btn" data-close="gmail-modal">✕</button>
+      <h2 class="dialog-title">Gmail</h2>
+      <div class="dialog-grid">
+        <!-- Botón visible solo cuando no hay sesión -->
+        <button id="btn-gmail-connect" class="modal-btn" style="display:none">Conectar Google</button>
+        <button id="btn-load-history"  class="modal-btn">Cargar historial</button>
+      </div>
+      <label class="field">
+        <span>Filtro Gmail</span>
+        <input id="gmail-query" type="text" value="has:attachment" />
+      </label>
+      <div class="status-box">
+        <div><strong>Cuenta:</strong> <span id="gmail-account">Verificando...</span></div>
+        <div><strong>Estado:</strong> <span id="gmail-status">Iniciando...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alarma -->
+  <div id="alarm-modal" class="overlay hidden">
+    <div class="dialog">
+      <button class="close-btn" data-close="alarm-modal">✕</button>
+      <h2 class="dialog-title">Alarma</h2>
+      <div class="dialog-grid">
+        <button id="btn-arm-on"  class="modal-btn success">Armar</button>
+        <button id="btn-arm-off" class="modal-btn danger">Desarmar</button>
+      </div>
+      <div class="status-box">
+        <div><strong>Estado:</strong> <span id="alarm-status">Desarmada</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eye -->
+  <div id="eye-modal" class="overlay hidden">
+    <div class="dialog">
+      <button class="close-btn" data-close="eye-modal">✕</button>
+      <h2 class="dialog-title">Vista rápida</h2>
+      <div class="status-box"><div>Reservado para pseudo-streaming.</div></div>
+    </div>
+  </div>
+
+  <!-- Config -->
+  <div id="config-modal" class="overlay hidden">
+    <div class="dialog">
+      <button class="close-btn" data-close="config-modal">✕</button>
+      <h2 class="dialog-title">Configuración</h2>
+      <label class="field">
+        <span>Email permitido</span>
+        <input id="allowed-email" type="text" value="icivil.jmr@gmail.com" />
+      </label>
+      <div class="dialog-grid">
+        <button id="btn-save-config" class="modal-btn">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/app.js"></script>
 </body>
 </html>
