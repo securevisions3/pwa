@@ -1,7 +1,7 @@
 
 /* ─── Config ─── */
 const cfg = window.SV_CONFIG || {};
-const SCOPES      = 'https://www.googleapis.com/auth/gmail.readonly';
+const SCOPES = 'openid email https://www.googleapis.com/auth/gmail.readonly';
 const BATCH       = 3;
 const WORKER_URL  = 'https://securevision-register.icivil-jmr.workers.dev';
 const REDIRECT_URI = (location.origin + location.pathname).replace(/\/?$/, '/');
