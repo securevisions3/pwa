@@ -1,0 +1,9 @@
+{
+  "name": "SecureVision-S3",
+  "short_name": "SecureVision",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#06111f",
+  "theme_color": "#06111f",
+  "icons": []
+}
