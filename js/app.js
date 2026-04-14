@@ -1,3 +1,4 @@
+
 /* ─── Config ─── */
 const cfg = window.SV_CONFIG || {};
 const SCOPES      = 'https://www.googleapis.com/auth/gmail.readonly';
@@ -180,19 +181,39 @@ async function handleOAuthCallback(){
     const data = await res.json();
     if(!res.ok || !data.access_token){ toast('Error al obtener token: ' + (data.error||'?')); return false; }
     saveTokens(data.access_token, data.refresh_token, data.expires_in);
+    state._idToken = data.id_token || null;
     return true;
   } catch(e){ toast('Error red: ' + e.message); return false; }
 }
 
 /* ─── Profile check ─── */
-async function fetchProfile(){
-  const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-    headers: { Authorization: `Bearer ${state.accessToken}` }
-  });
-  const data = await res.json();
-  state.selectedEmail = data.email || '';
-  els.gmailAccount.textContent = state.selectedEmail || 'Sin cuenta';
-  if((cfg.allowedEmail||'').trim() && state.selectedEmail.toLowerCase() !== String(cfg.allowedEmail).trim().toLowerCase()){
+function decodeIdToken(idToken){
+  try {
+    const payload = idToken.split('.')[1];
+    const json = atob(payload.replace(/-/g,'+').replace(/_/g,'/'));
+    return JSON.parse(json);
+  } catch { return {}; }
+}
+
+async function fetchProfile(idToken){
+  let email = '';
+  if(idToken){
+    const claims = decodeIdToken(idToken);
+    email = claims.email || '';
+  }
+  // Fallback: llamar userinfo si no hay id_token
+  if(!email){
+    try {
+      const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${state.accessToken}` }
+      });
+      const data = await res.json();
+      email = data.email || '';
+    } catch {}
+  }
+  state.selectedEmail = email;
+  els.gmailAccount.textContent = email || 'Sin cuenta';
+  if((cfg.allowedEmail||'').trim() && email.toLowerCase() !== String(cfg.allowedEmail).trim().toLowerCase()){
     els.gmailStatus.textContent = 'Cuenta no permitida';
     toast('La cuenta no coincide con el email permitido.');
     clearTokens();
@@ -209,6 +230,8 @@ async function initAuth(){
   if(location.search.includes('code=')){
     const ok = await handleOAuthCallback();
     if(!ok){ els.gmailStatus.textContent='Error en login'; return; }
+    await fetchProfile(state._idToken || null);
+    return;
   }
 
   // 2. Cargar tokens guardados en localStorage
@@ -216,7 +239,7 @@ async function initAuth(){
 
   // 3. ¿Token válido?
   if(isTokenValid()){
-    await fetchProfile();
+    await fetchProfile(null);
     return;
   }
 
@@ -224,7 +247,7 @@ async function initAuth(){
   els.gmailStatus.textContent = 'Renovando sesión...';
   const ok = await refreshAccessToken();
   if(ok){
-    await fetchProfile();
+    await fetchProfile(null);
     return;
   }
 
