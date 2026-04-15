@@ -301,8 +301,8 @@ function renderHistory(){
               <div class="event-date">${formatDate(ev.timestamp)}</div>
             </div>
             <div class="event-actions">
-              <button class="small-btn" data-open="${ev.id}">Abrir</button>
-              <button class="small-btn" data-download="${ev.id}">Descargar</button>
+              <button class="icon-action-btn" data-open="${ev.id}" title="Abrir">⤢</button>
+              <button class="icon-action-btn dl" data-download="${ev.id}" title="Descargar">⬇</button>
             </div>
           </article>`).join('')}
       </div>
