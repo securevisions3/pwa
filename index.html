@@ -1056,9 +1056,19 @@ function renderAlerts(highlightTs = []) {
 
     const btnVideo = document.createElement('button');
     btnVideo.className = 'alert-btn' + (alert.has_video ? '' : ' disabled');
-    btnVideo.textContent = '▶ VIDEO';
-    if (alert.has_video) {
+    if (alert.video_mp4) {
+      btnVideo.textContent = '▶ CON AUDIO';
+      btnVideo.style.color = '#00ff88';
       btnVideo.onclick = (e) => { e.stopPropagation(); openMedia('video', 'video', alert.ts); };
+    } else if (alert.video_raw) {
+      btnVideo.textContent = '⟳ Procesando...';
+      btnVideo.style.color = '#ffaa00';
+      btnVideo.disabled = true;
+    } else if (alert.has_video) {
+      btnVideo.textContent = '▶ VIDEO';
+      btnVideo.onclick = (e) => { e.stopPropagation(); openMedia('video', 'video', alert.ts); };
+    } else {
+      btnVideo.textContent = '▶ VIDEO';
     }
     actions.appendChild(btnVideo);
 
